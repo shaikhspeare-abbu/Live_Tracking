@@ -21,4 +21,23 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
     attribution: "OpenStreetMap"
 }).addTo(map)
 
+const markers = {};
 
+socket.on("recieve-location", (data)=>{
+    const {id, latitude, longitude} = data;
+    map.setView([latitude,longitude]);
+    if(markers[id]){
+        markers[id].setLatLng([latitude, longitude]);
+    }
+    else{
+        marker[id] = L.markers([latitude, longitude]).addTo(map);
+    }
+
+});
+
+socket.on("user-disconnected", (id) => {
+     if(markers[id]){
+        map.removeLayer(markers[id]);
+        delete markers[id];
+     }
+});
